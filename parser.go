@@ -11,7 +11,7 @@ type Songs struct {
 	URL      string
 }
 
-func ParseUtanetHTML(html_string string) []Songs {
+func ParseSongs(html_string string) []Songs {
 	re1, e1 := regexp.Compile("<tr>.+?</tr>")
 	re2, e2 := regexp.Compile("<td class=\".*?td[1-2]\">.+?</td>")
 	re3, e3 := regexp.Compile("/song/[0-9]+")

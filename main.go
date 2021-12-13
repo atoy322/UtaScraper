@@ -17,7 +17,7 @@ func main() {
 	}
 
 	html_string := string(html)
-	songs := ParseUtanetHTML(html_string)
+	songs := ParseSongs(html_string)
 
 	for i := range songs {
 		song := songs[i]
