@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 	"net/http"
+    "os"
 	"regexp"
 )
 
 func main() {
-	response, e := http.Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=F.O.O.L")
+    if len(os.Args) == 1 {
+        return
+    }
+    query := os.Args[1]
+	response, e := http.Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=" + query)
 	if e != nil {
 		panic(e)
 	}
