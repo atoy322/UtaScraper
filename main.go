@@ -2,53 +2,52 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-    "os"
-	"regexp"
+	"os"
+	"strconv"
 )
 
 func main() {
-    if len(os.Args) == 1 {
-        return
-    }
-    query := os.Args[1]
-	response, e := http.Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=" + query)
+	if len(os.Args) == 1 {
+		return
+	}
+	query := os.Args[1]
+	html, e := Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=" + query)
 	if e != nil {
 		panic(e)
 	}
 
-	html := make([]byte, 1024)
-	for {
-		buf := make([]byte, 1024)
-		n, e := response.Body.Read(buf)
-		html = append(html, buf[:n]...)
-
-		if (n == 0) || (e != nil) {
-			break
-		}
-	}
-
 	html_string := string(html)
-	re1, e1 := regexp.Compile("<tr>.+?</tr>")
-    re2, e2 := regexp.Compile("<td class=\".*?td[1-2]\">.+?</td>")
-    re3, e3 := regexp.Compile("/song/[0-9]+")
-    re4, e4 := regexp.Compile("<.+?>")
-	if e1 != nil {
-		panic(e1)
-	} else if e2 != nil {
-        panic(e2)
-    } else if e3 != nil {
-        panic(e3)
-    } else if e4 != nil {
-        panic(e4)
-    }
-	table_rows := re1.FindAllString(html_string, -1)
+	songs := ParseUtanetHTML(html_string)
 
-	for i := range table_rows {
-        table_datas := re2.FindAllString(table_rows[i], -1)
-        path := re3.FindString(table_datas[0])
-        name := re4.ReplaceAllString(table_datas[0], "")
-        musician := re4.ReplaceAllString(table_datas[1], "")
-        fmt.Printf("u=%s n=%s m=%s\n", path, name, musician)
+	for i := range songs {
+		song := songs[i]
+		fmt.Printf("[%3d] : %s / %s\n", i, song.SongName, song.Name)
 	}
+
+	fmt.Print("Song id : ")
+	stdin_text := make([]byte, 1024)
+	n, _ := os.Stdin.Read(stdin_text)
+	index, e := strconv.Atoi(string(stdin_text[:n-2]))
+	if e != nil {
+		panic(e)
+	}
+	target_song := songs[index]
+
+	html, e = Get(target_song.URL)
+	if e != nil {
+		panic(e)
+	}
+
+	html_string = string(html)
+	kashi := ParseKashi(html_string)
+
+	fmt.Println(kashi)
+
+	file, e := os.Create(target_song.SongName + " - " + target_song.Name + ".txt")
+	if e != nil {
+		panic(e)
+	}
+	defer file.Close()
+
+	file.WriteString(kashi)
 }
