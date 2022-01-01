@@ -11,7 +11,10 @@ func main() {
 	if len(os.Args) == 1 {
 		return
 	}
-	query := os.Args[1]
+    query := strings.Join(os.Args[1:], "%20")
+    query = strings.Replace(query, "　", "%20", -1)
+    fmt.Println(query)
+
 	html, e := Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=" + query)
 	if e != nil {
 		panic(e)
