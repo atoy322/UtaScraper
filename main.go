@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+    "strings"
 )
 
 func main() {
@@ -27,7 +28,10 @@ func main() {
 	fmt.Print("Song id : ")
 	stdin_text := make([]byte, 1024)
 	n, _ := os.Stdin.Read(stdin_text)
-	index, e := strconv.Atoi(string(stdin_text[:n-2]))
+    line := string(stdin_text[:n])
+    line = strings.Replace(line, "\n", "", -1)
+    line = strings.Replace(line, "\r", "", -1)
+    index, e := strconv.Atoi(line)
 	if e != nil {
 		panic(e)
 	}
