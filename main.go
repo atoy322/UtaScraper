@@ -1,19 +1,18 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "strconv"
-    "strings"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
 	if len(os.Args) == 1 {
 		return
 	}
-    query := strings.Join(os.Args[1:], "%20")
-    query = strings.Replace(query, "　", "%20", -1)
-    fmt.Println(query)
+	query := strings.Join(os.Args[1:], "%20")
+	query = strings.Replace(query, "　", "%20", -1)
 
 	html, e := Get("https://www.uta-net.com/search/?Aselect=2&Bselect=3&Keyword=" + query)
 	if e != nil {
@@ -31,10 +30,10 @@ func main() {
 	fmt.Print("Song id : ")
 	stdin_text := make([]byte, 1024)
 	n, _ := os.Stdin.Read(stdin_text)
-    line := string(stdin_text[:n])
-    line = strings.Replace(line, "\n", "", -1)
-    line = strings.Replace(line, "\r", "", -1)
-    index, e := strconv.Atoi(line)
+	line := string(stdin_text[:n])
+	line = strings.Replace(line, "\n", "", -1)
+	line = strings.Replace(line, "\r", "", -1)
+	index, e := strconv.Atoi(line)
 	if e != nil {
 		panic(e)
 	}
